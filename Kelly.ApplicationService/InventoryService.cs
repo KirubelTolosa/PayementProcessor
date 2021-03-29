@@ -14,7 +14,7 @@ namespace Kelly.ApplicationService
         }
         public bool CheckProductAvailabliltiy(string productName, int amount)
         {
-            return _repositoryService.CheckProductAvailabliltiy(productName);
+            return _repositoryService.CheckProductAvailabliltiy(productName, amount);
         }
 
         public decimal CheckProductPrice(string productName)

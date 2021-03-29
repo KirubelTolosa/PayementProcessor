@@ -3,6 +3,6 @@
     public interface IRepositoryService
     {
         decimal CheckProductPrice(string productName);
-        bool CheckProductAvailabliltiy(string productName);
+        bool CheckProductAvailabliltiy(string productName, int amount);
     }
 }

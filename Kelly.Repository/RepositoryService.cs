@@ -20,8 +20,7 @@ namespace Kelly.Repository
                 {
                     using (SqlCommand sqlCommandCheckInventory = new SqlCommand(@"SELECT count FROM Products p WHERE p.productName == @prdName", connection))
                     {
-                        sqlCommandCheckInventory.Parameters.Add("prdName", System.Data.SqlDbType.NVarChar).Value = productName;
-                        
+                        sqlCommandCheckInventory.Parameters.Add("prdName", System.Data.SqlDbType.NVarChar).Value = productName;                        
                         countOfItemsLeft = (Int32)sqlCommandCheckInventory.ExecuteReader()["count"];
                         connection.Close();
                     }
@@ -33,7 +32,6 @@ namespace Kelly.Repository
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Commit Exception Type: {0}", ex.GetType());
                 Console.WriteLine("  Message: {0}", ex.Message);
                 throw ex;
             }
@@ -41,7 +39,29 @@ namespace Kelly.Repository
         }
         public decimal CheckProductPrice(string productName)
         {
-            return (decimal)10.5;
+            decimal itemPrice;
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(_configuration.GetConnectionString("ProductInventoryDB")))
+                {
+                    using (SqlCommand sqlCommandCheckInventory = new SqlCommand(@"SELECT price FROM Products p WHERE p.productName == @prdName", connection))
+                    {
+                        sqlCommandCheckInventory.Parameters.Add("prdName", System.Data.SqlDbType.NVarChar).Value = productName;
+                        itemPrice = (decimal)sqlCommandCheckInventory.ExecuteReader()["price"];
+                        connection.Close();
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                throw ex;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("  Message: {0}", ex.Message);
+                throw ex;
+            }
+            return itemPrice;
         }
     }
 }

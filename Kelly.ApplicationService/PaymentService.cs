@@ -1,6 +1,10 @@
 ﻿using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 
 namespace Kelly.ApplicationService
@@ -14,7 +18,39 @@ namespace Kelly.ApplicationService
         }
         public bool ChargePayment(string creditCardNumber, decimal amount)
         {
-            string paymentGatewayUrl = _configuration["PaymentGatewayURL"];
+            string paymentGatewayURL = _configuration["PaymentGatewayURL"];
+            using (HttpClient client = new HttpClient())
+            {
+                client.BaseAddress = new Uri(paymentGatewayURL);
+                client.DefaultRequestHeaders.Accept.Add(
+                new MediaTypeWithQualityHeaderValue("application/json"));
+                client.DefaultRequestHeaders.Add("api-key", _configuration["api-key"]);
+                JObject requestObject = JObject.FromObject(new
+                {
+                    creditCardNumber = creditCardNumber,
+                    amount = amount
+                });
+
+                string json = JsonConvert.SerializeObject(requestObject);
+                HttpContent httpContent = new StringContent(json, Encoding.UTF8, "application/json");
+                try
+                {
+                    HttpResponseMessage response = client.PostAsync(paymentGatewayURL, httpContent).Result;
+                    if (!response.IsSuccessStatusCode)
+                    {
+                        return false;
+                    }
+                    else
+                    {
+                        Console.WriteLine("Payment failed!" + "{0} ({1})", (int)response.StatusCode, response.ReasonPhrase);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("  Message: {0}", ex.Message);
+                    throw ex;
+                }
+            }
             return true;
         }
     }
