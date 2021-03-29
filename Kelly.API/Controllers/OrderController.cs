@@ -8,7 +8,7 @@ using System;
 namespace Kelly.API.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
 
     public class OrderController : ControllerBase
     {

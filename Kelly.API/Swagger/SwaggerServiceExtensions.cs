@@ -19,7 +19,7 @@ namespace Kelly.API.Swagger
                     Version = "Release 1.0",
                     Title = "Kelly API",
                     Description = "This is a test API",
-                    Contact = new OpenApiContact { Email = "tolosakirubel@gmail.com", Name = "Kirubel Tolosa", Url = new Uri("https://kirubeltolosa.com") }                    
+                    Contact = new OpenApiContact { Email = "tolosakirubel@gmail.com", Name = "Kirubel Tolosa", Url = new Uri("http://kirubeltolosa.com") }                    
                 });
 
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme

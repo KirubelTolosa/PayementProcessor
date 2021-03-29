@@ -39,18 +39,12 @@ namespace Kelly
             services.AddScoped<IAPIService, Kelly.APIService.APIService>();
             services.AddScoped<IOrderProcessorService, OrderProcessorService>();
             services.AddScoped<IInventoryService, InventoryService>();
-            services.AddScoped<IShipmentService, ShipmentService>();
-            
-            
+            services.AddScoped<IShipmentService, ShipmentService>();      
             services.AddScoped<IPaymentService, PaymentService>();
             services.AddScoped<IRepositoryService, RepositoryService>();
             services
-                .AddControllersWithViews()
-                .AddJsonOptions(options =>
-                    options.JsonSerializerOptions.Converters.Add(new System.Text.Json.Serialization.JsonStringEnumConverter()));
+                .AddControllersWithViews();
             services.AddSingleton<IConfiguration>(Configuration);
-
-
         }   
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
