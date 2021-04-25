@@ -17,9 +17,9 @@ namespace Kelly.ApplicationService
             return _repositoryService.CheckProductAvailabliltiy(productName, amount);
         }
 
-        public decimal CheckProductPrice(string productName)
+        public decimal GetProductPrice(string productName)
         {
-            return _repositoryService.CheckProductPrice(productName);
+            return _repositoryService.GetProductPrice(productName);
         }
     }
 }

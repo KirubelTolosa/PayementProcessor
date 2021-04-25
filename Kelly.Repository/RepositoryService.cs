@@ -37,17 +37,17 @@ namespace Kelly.Repository
             }
             return countOfItemsLeft - amountRequested > 0 ? true : false;
         }
-        public decimal CheckProductPrice(string productName)
+        public decimal GetProductPrice(string productName)
         {
             decimal itemPrice;
             try
             {
                 using (SqlConnection connection = new SqlConnection(_configuration.GetConnectionString("ProductInventoryDB")))
                 {
-                    using (SqlCommand sqlCommandCheckInventory = new SqlCommand(@"SELECT price FROM Products p WHERE p.productName == @prdName", connection))
+                    using (SqlCommand sqlCommandGetProductPrice = new SqlCommand(@"SELECT price FROM Products p WHERE p.productName == @prdName", connection))
                     {
-                        sqlCommandCheckInventory.Parameters.Add("prdName", System.Data.SqlDbType.NVarChar).Value = productName;
-                        itemPrice = (decimal)sqlCommandCheckInventory.ExecuteReader()["price"];
+                        sqlCommandGetProductPrice.Parameters.Add("prdName", System.Data.SqlDbType.NVarChar).Value = productName;
+                        itemPrice = (decimal)sqlCommandGetProductPrice.ExecuteReader()["price"];
                         connection.Close();
                     }
                 }

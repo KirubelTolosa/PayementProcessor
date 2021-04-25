@@ -6,6 +6,6 @@ namespace Kelly.ApplicationService.Interfaces
 {
     public interface IOrderProcessorService
     {
-        bool ProcessOrder(OrderApplicationServiceDto order);
+        bool PlaceOrder(OrderApplicationServiceDto order);
     }
 }

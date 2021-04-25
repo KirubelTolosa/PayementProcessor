@@ -4,6 +4,8 @@ using Kelly.APIService.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using System;
+using System.Net;
+using System.Threading.Tasks;
 
 namespace Kelly.API.Controllers
 {
@@ -20,24 +22,28 @@ namespace Kelly.API.Controllers
             _configuration = configuration;
         }
 
+        /// <summary>
+        /// The PlaceOrder endpoint accepts credit card information, order item and amount to place an order. 
+        /// </summary>
+        /// <param name="order">(ItemName, Amount, CreditCardInfo)</param>
+        /// <returns>HttpStatusCode indicating the success of the PlaceOrder request.</returns>
         [HttpPost("placeorder")]
-        public IActionResult PlaceOrder([FromBody]OrderAPIDto order)
+        public async Task<IActionResult> PlaceOrder([FromBody]OrderAPIDto order)
         {
-            IActionResult response;
+            HttpStatusCode result;
             try
             {
-                _apiService.ProcessOrder(order.ToOrderAPIServiceDto());
+               result = await _apiService.PlaceOrder(order.ToOrderAPIServiceDto());
+                if(result != HttpStatusCode.OK)
+                {
+                    return StatusCode((int)result);
+                }
             }
             catch (Exception ex)
             {
                 return StatusCode(500, ex.Message);
             }
-
-            return response = Ok("Order processed successfully!");
+            return Ok("Order processed successfully!");
         }
-
-
     }
-
-
 }

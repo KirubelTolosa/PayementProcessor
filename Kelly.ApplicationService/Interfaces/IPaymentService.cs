@@ -2,6 +2,6 @@
 {
     public interface IPaymentService
     {
-        bool ChargePayment(string creditCardNumber, decimal amount);
+        bool ChargeCard(string creditCardNumber, decimal amount);
     }
 }

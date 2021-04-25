@@ -6,6 +6,6 @@ namespace Kelly.APIService.Interfaces
 {
     public interface IAPIService
     {
-        bool ProcessOrder(OrderAPIServiceDto order);        
+        bool PlaceOrder(OrderAPIServiceDto order);        
     }
 }

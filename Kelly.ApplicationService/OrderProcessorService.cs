@@ -2,7 +2,9 @@
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Kelly.ApplicationService
 {
@@ -21,16 +23,17 @@ namespace Kelly.ApplicationService
             _paymentService = paymentService;
             _shipmentService = shipmentService;
         }
-        public bool ProcessOrder(OrderApplicationServiceDto order)
+        public async Task<HttpStatusCode> PlaceOrder(OrderApplicationServiceDto order)
         {
             bool productAvailable = _inventoryService.CheckProductAvailabliltiy(order.ProductName, order.Amount);
+            HttpStatusCode x;
             if (productAvailable)
             {
-                decimal total = _inventoryService.CheckProductPrice(order.ProductName) * order.Amount;
-                var paymentSucceded = _paymentService.ChargePayment(order.CreditCardNumber, total);
+                decimal total = _inventoryService.GetProductPrice(order.ProductName) * order.Amount;
+                var paymentSucceded = _paymentService.ChargeCard(order.CreditCardNumber, total);
                 if (paymentSucceded)
                 {
-                    _shipmentService.ShipOrder(order.ProductName, order.Amount);
+                    x = await _shipmentService.EmailShipmentOrder(order.ProductName, order.Amount);
                 }
                 
             }

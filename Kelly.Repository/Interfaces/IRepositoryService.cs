@@ -2,7 +2,7 @@
 {
     public interface IRepositoryService
     {
-        decimal CheckProductPrice(string productName);
+        decimal GetProductPrice(string productName);
         bool CheckProductAvailabliltiy(string productName, int amount);
     }
 }

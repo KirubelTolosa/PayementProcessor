@@ -12,9 +12,9 @@ namespace Kelly.APIService
         {
             _orderProcessorService = orderProcessorService;
         }
-        public bool ProcessOrder(OrderAPIServiceDto order)
+        public bool PlaceOrder(OrderAPIServiceDto order)
         {
-            return _orderProcessorService.ProcessOrder(order.ToOrderApplicationServiceDto());            
+            return _orderProcessorService.PlaceOrder(order.ToOrderApplicationServiceDto());            
         }
     }
 }

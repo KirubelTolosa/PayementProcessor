@@ -16,18 +16,17 @@ namespace Kelly.ApplicationService
         {
             _configuration = configuration;
         }
-        public bool ChargePayment(string creditCardNumber, decimal amount)
+        public bool ChargeCard(string creditCardNumber, decimal amount)
         {
             string paymentGatewayURL = _configuration["PaymentGatewayURL"];
             using (HttpClient client = new HttpClient())
             {
                 client.BaseAddress = new Uri(paymentGatewayURL);
-                client.DefaultRequestHeaders.Accept.Add(
-                new MediaTypeWithQualityHeaderValue("application/json"));
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                 client.DefaultRequestHeaders.Add("api-key", _configuration["api-key"]);
                 JObject requestObject = JObject.FromObject(new
                 {
-                    creditCardNumber = creditCardNumber,
+                    creditCardInfo = creditCardNumber,
                     amount = amount
                 });
 
@@ -38,11 +37,8 @@ namespace Kelly.ApplicationService
                     HttpResponseMessage response = client.PostAsync(paymentGatewayURL, httpContent).Result;
                     if (!response.IsSuccessStatusCode)
                     {
-                        return false;
-                    }
-                    else
-                    {
                         Console.WriteLine("Payment failed!" + "{0} ({1})", (int)response.StatusCode, response.ReasonPhrase);
+                        return false;
                     }
                 }
                 catch (Exception ex)
