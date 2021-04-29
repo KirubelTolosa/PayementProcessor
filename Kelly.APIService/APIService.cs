@@ -2,6 +2,8 @@
 using Kelly.APIService.Interfaces;
 using Kelly.ApplicationService.Interfaces;
 using System;
+using System.Net;
+using System.Threading.Tasks;
 
 namespace Kelly.APIService
 {
@@ -12,9 +14,9 @@ namespace Kelly.APIService
         {
             _orderProcessorService = orderProcessorService;
         }
-        public bool PlaceOrder(OrderAPIServiceDto order)
+        public async Task<HttpStatusCode> PlaceOrder(OrderAPIServiceDto order)
         {
-            return _orderProcessorService.PlaceOrder(order.ToOrderApplicationServiceDto());            
+            return await _orderProcessorService.PlaceOrder(order.ToOrderApplicationServiceDto());            
         }
     }
 }

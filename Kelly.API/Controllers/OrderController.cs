@@ -41,6 +41,7 @@ namespace Kelly.API.Controllers
             }
             catch (Exception ex)
             {
+                throw ex;
                 return StatusCode(500, ex.Message);
             }
             return Ok("Order processed successfully!");

@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
@@ -6,6 +7,7 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
+using System.Text.Json;
 
 namespace Kelly.ApplicationService
 {
@@ -16,36 +18,58 @@ namespace Kelly.ApplicationService
         {
             _configuration = configuration;
         }
-        public bool ChargeCard(string creditCardNumber, decimal amount)
+        public bool ChargeCard(CreditCardInfoApplicationServiceDto creditCardInfo, double amount)
         {
-            string paymentGatewayURL = _configuration["PaymentGatewayURL"];
-            using (HttpClient client = new HttpClient())
+            string paymentGatewayURL = _configuration.GetSection("PaymentGatewaySettings")["PaymentGatewayURL"];
+            bool response = true;
+            
+            try
             {
-                client.BaseAddress = new Uri(paymentGatewayURL);
-                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                client.DefaultRequestHeaders.Add("api-key", _configuration["api-key"]);
-                JObject requestObject = JObject.FromObject(new
+                #region Call to external payment gateway. Mocked below with an internal call to "ChargePayment" method.
+                /*
+                JObject requestObject = new JObject();
+                requestObject["amount"] = amount;
+                requestObject["creditCardInfo"] = JObject.FromObject(new
                 {
-                    creditCardInfo = creditCardNumber,
-                    amount = amount
+                    creditCardNumber = creditCardInfo.CreditCardNumber,
+                    nameOnCard = creditCardInfo.NameOnCard,
+                    expirationDate = creditCardInfo.ExpirationDate,
+                    cvv = creditCardInfo.CVV
                 });
+                var json = JsonConvert.SerializeObject(requestObject);
+                var data = new StringContent(json, Encoding.UTF8, "application/json");
+                using (HttpClient client = new HttpClient())
+                {
+                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("/*"));                
+                    response = client.PostAsync(paymentGatewayURL, data).Result;
+                response.EnsureSuccessStatusCode();
+                }
+                */
+                #endregion
+                response = ChargePayement(creditCardInfo, amount);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("  Message: {0}", ex.Message);
+                throw ex;
+            }
+            
+            return response;
+        }
+        public bool ChargePayement(CreditCardInfoApplicationServiceDto creditCardInfo, double amount)
+        {
+            // The account balance is hardcoded to simplify the implementation
+            double accountBalance = 100;
+            string isVisa = "^4[0-9]{12}(?:[0-9]{3})?$";
 
-                string json = JsonConvert.SerializeObject(requestObject);
-                HttpContent httpContent = new StringContent(json, Encoding.UTF8, "application/json");
-                try
-                {
-                    HttpResponseMessage response = client.PostAsync(paymentGatewayURL, httpContent).Result;
-                    if (!response.IsSuccessStatusCode)
-                    {
-                        Console.WriteLine("Payment failed!" + "{0} ({1})", (int)response.StatusCode, response.ReasonPhrase);
-                        return false;
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine("  Message: {0}", ex.Message);
-                    throw ex;
-                }
+            //Simple scenarios for testing purposes              
+            if (!System.Text.RegularExpressions.Regex.IsMatch(creditCardInfo.CreditCardNumber, isVisa)) //Invalid CreditCard Info. Only accepting VISA
+            {
+                return false;
+            }
+            else if (amount > accountBalance) //Not enough balance 
+            {
+                return false;
             }
             return true;
         }

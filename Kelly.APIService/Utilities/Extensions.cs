@@ -15,7 +15,17 @@ namespace Kelly.API.Utilities
             {
                 ProductName = order.ProductName,
                 Amount = order.Amount,
-                CreditCardNumber = order.CreditCardNumber
+                CreditCardInfo = order.CreditCardInfo.ToCreditCardInfoAPIServiceDto()
+            };
+        }
+        public static CreditCardInfoApplicationServiceDto ToCreditCardInfoAPIServiceDto(this CreditCardInfoAPIServiceDto creditCardInfo)
+        {
+            return new CreditCardInfoApplicationServiceDto
+            {
+                CreditCardNumber = creditCardInfo.CreditCardNumber,
+                NameOnCard = creditCardInfo.NameOnCard,
+                ExpirationDate = creditCardInfo.ExpirationDate,
+                CVV = creditCardInfo.CVV
             };
         }
     }

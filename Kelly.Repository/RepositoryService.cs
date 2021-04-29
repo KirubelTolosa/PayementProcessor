@@ -11,17 +11,24 @@ namespace Kelly.Repository
         {
             _configuration = configuration;
         }
-        public bool CheckProductAvailabliltiy(string productName, int amountRequested)
+        public bool IsProductAvailable(string productName, int amountRequested)
         {
             int countOfItemsLeft = 0;
             try
             {
-                using (SqlConnection connection = new SqlConnection(_configuration.GetConnectionString("ProductInventoryDB")))
+                using (SqlConnection connection = new SqlConnection(_configuration.GetConnectionString("ProductInventoryDB")))  
                 {
-                    using (SqlCommand sqlCommandCheckInventory = new SqlCommand(@"SELECT count FROM Products p WHERE p.productName == @prdName", connection))
+                    using (SqlCommand sqlCommandCheckInventory = new SqlCommand(@"SELECT CountInStore as [count] FROM Products p WHERE p.ProductName = @prdName", connection))
                     {
-                        sqlCommandCheckInventory.Parameters.Add("prdName", System.Data.SqlDbType.NVarChar).Value = productName;                        
-                        countOfItemsLeft = (Int32)sqlCommandCheckInventory.ExecuteReader()["count"];
+                        connection.Open();
+                        
+                        sqlCommandCheckInventory.Parameters.Add("prdName", System.Data.SqlDbType.NVarChar).Value = productName;
+                        SqlDataReader dataReader = sqlCommandCheckInventory.ExecuteReader();
+                        if (dataReader.Read())
+                        {
+                            countOfItemsLeft = (Int32)dataReader["count"];
+                        }
+                        
                         connection.Close();
                     }
                 }
@@ -35,19 +42,25 @@ namespace Kelly.Repository
                 Console.WriteLine("  Message: {0}", ex.Message);
                 throw ex;
             }
-            return countOfItemsLeft - amountRequested > 0 ? true : false;
+            return countOfItemsLeft - amountRequested >= 0 ? true : false;
         }
-        public decimal GetProductPrice(string productName)
+        public double GetProductPrice(string productName)
         {
-            decimal itemPrice;
+            double itemPrice = 0;
             try
             {
                 using (SqlConnection connection = new SqlConnection(_configuration.GetConnectionString("ProductInventoryDB")))
                 {
-                    using (SqlCommand sqlCommandGetProductPrice = new SqlCommand(@"SELECT price FROM Products p WHERE p.productName == @prdName", connection))
+                    using (SqlCommand sqlCommandGetProductPrice = new SqlCommand(@"SELECT price FROM Products p WHERE p.productName = @prdName", connection))
                     {
+                        connection.Open();
                         sqlCommandGetProductPrice.Parameters.Add("prdName", System.Data.SqlDbType.NVarChar).Value = productName;
-                        itemPrice = (decimal)sqlCommandGetProductPrice.ExecuteReader()["price"];
+                        SqlDataReader dataReader = sqlCommandGetProductPrice.ExecuteReader();
+                        if (dataReader.Read())
+                        {
+                            itemPrice = (double)dataReader["price"];
+                        }
+                        
                         connection.Close();
                     }
                 }

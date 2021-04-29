@@ -25,25 +25,17 @@ namespace Kelly.ApplicationService
         }
         public async Task<HttpStatusCode> PlaceOrder(OrderApplicationServiceDto order)
         {
-            bool productAvailable = _inventoryService.CheckProductAvailabliltiy(order.ProductName, order.Amount);
-            HttpStatusCode x;
+            bool productAvailable = _inventoryService.IsProductAvailable(order.ProductName, order.Amount);
             if (productAvailable)
             {
-                decimal total = _inventoryService.GetProductPrice(order.ProductName) * order.Amount;
-                var paymentSucceded = _paymentService.ChargeCard(order.CreditCardNumber, total);
-                if (paymentSucceded)
+                double total = _inventoryService.GetProductPrice(order.ProductName) * order.Amount;
+                var paymentSucceded = _paymentService.ChargeCard(order.CreditCardInfo, total);
+                if (!paymentSucceded)
                 {
-                    x = await _shipmentService.EmailShipmentOrder(order.ProductName, order.Amount);
-                }
-                
+                    return HttpStatusCode.FailedDependency;
+                }                
             }
-            else
-            {
-                return false;
-            }
-            return true;
+            return await _shipmentService.EmailShipmentOrder(order.ProductName, order.Amount);
         }
-
-        
     }
 }

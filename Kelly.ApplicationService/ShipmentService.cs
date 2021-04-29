@@ -4,6 +4,7 @@ using SendGrid;
 using SendGrid.Helpers.Mail;
 using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -17,19 +18,28 @@ namespace Kelly.ApplicationService
             _configuration = configuration;
         }
 
-        public async Task<Response> EmailShipmentOrder(string productName, int amount)
+        public async Task<HttpStatusCode> EmailShipmentOrder(string productName, int amount, bool test = false)
         {
-            var shippingDepartmentEmail = _configuration["ShippingEmail"];
-            var sendGridClient = new SendGridClient("API_KEY");
-            var from = new EmailAddress("from email", "from user");
-            var subject = "subject";
-            var to = new EmailAddress("to email", "to name");
-            var plainContent = "Hello";
-            var htmlContent = "<h1>Hello</h1>";
-            var mailMessage = MailHelper.CreateSingleEmail(from, to, subject, plainContent, htmlContent);
-            var response = await sendGridClient.SendEmailAsync(mailMessage);
+            
+            var sendGridClient = new SendGridClient(_configuration.GetSection("EmailSettings")["SendGridApiKey"]);
+            var mailMessage = MailHelper.CreateSingleEmail(
+                new EmailAddress(_configuration.GetSection("EmailSettings")["OrderProcessorEmail"], _configuration.GetSection("EmailSettings")["OrderProcessorUser"]),
+                new EmailAddress(_configuration.GetSection("EmailSettings")["ShipmentDeptEmail"], _configuration.GetSection("EmailSettings")["ShipmentDeptUser"]),
+                $"Placing an order for product: {productName}, amount {amount}",
+                "Please deliver the given amount of items of the product to the address...",
+                "<h1>Deliver Instruction</h1>"
+                );
 
-            return response;
+            #region //Logic for getting a list of possible products to ship (Included for testing reason)
+            Dictionary<string, int> products = new Dictionary<string, int> {
+                {"BookX", 50},
+                {"BookY", 80 },
+                {"BookZ", 15 }
+            };
+            return test && products.ContainsKey(productName) ? HttpStatusCode.OK : HttpStatusCode.InternalServerError;
+            #endregion
+            var response = await sendGridClient.SendEmailAsync(mailMessage);
+            return response.StatusCode;
         }
     }
 }

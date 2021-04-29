@@ -12,12 +12,12 @@ namespace Kelly.ApplicationService
         {
             _repositoryService = repositoryService;
         }
-        public bool CheckProductAvailabliltiy(string productName, int amount)
+        public bool IsProductAvailable(string productName, int amount)
         {
-            return _repositoryService.CheckProductAvailabliltiy(productName, amount);
+            return _repositoryService.IsProductAvailable(productName, amount);
         }
 
-        public decimal GetProductPrice(string productName)
+        public double GetProductPrice(string productName)
         {
             return _repositoryService.GetProductPrice(productName);
         }

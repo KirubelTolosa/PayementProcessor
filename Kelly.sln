@@ -11,6 +11,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kelly.ApplicationService", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kelly.API", "Kelly.API\Kelly.API.csproj", "{4279AB7E-D47E-4E6C-932D-EEA82EB16910}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kelly.Tests", "Kelly.Tests\Kelly.Tests.csproj", "{B5D6E20C-D26B-4222-B5AA-58563DC42A1F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{965D05D9-7E5A-4801-B817-AC26879A094F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,9 +37,16 @@ Global
 		{4279AB7E-D47E-4E6C-932D-EEA82EB16910}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4279AB7E-D47E-4E6C-932D-EEA82EB16910}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4279AB7E-D47E-4E6C-932D-EEA82EB16910}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B5D6E20C-D26B-4222-B5AA-58563DC42A1F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B5D6E20C-D26B-4222-B5AA-58563DC42A1F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B5D6E20C-D26B-4222-B5AA-58563DC42A1F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B5D6E20C-D26B-4222-B5AA-58563DC42A1F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{B5D6E20C-D26B-4222-B5AA-58563DC42A1F} = {965D05D9-7E5A-4801-B817-AC26879A094F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {8968DC76-C393-4DEB-BF62-1356A75966DB}
